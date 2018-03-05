@@ -20,6 +20,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import simulation.Triangle;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 
 /**
  *
@@ -41,6 +43,15 @@ public class FXMLDocumentControllerClient implements Initializable {
         
         Stage primaryStage = new Stage();
         Scene scene = new Scene(gamePane, 600, 500);
+        
+        
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+
+        primaryStage.setX(bounds.getMinX());
+        primaryStage.setY(bounds.getMinY());
+        primaryStage.setWidth(bounds.getWidth());
+        primaryStage.setHeight(bounds.getHeight());
         primaryStage.setTitle("Final Game");
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((event)->System.exit(0));
