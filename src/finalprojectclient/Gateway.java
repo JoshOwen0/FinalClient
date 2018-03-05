@@ -11,9 +11,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import javafx.scene.shape.Shape;
 import com.google.gson.Gson;
+import java.io.ObjectInputStream;
 import java.util.List;
 import javafx.scene.shape.Shape;
 /**
@@ -23,6 +22,7 @@ import javafx.scene.shape.Shape;
 public class Gateway implements net.NetConstants{
     private PrintWriter outputToServer;
     private BufferedReader inputFromServer;
+    private ObjectInputStream inObjFromServer;
     private GamePane gamePane;
     private Gson gson;
     public Gateway(GamePane gp) {
@@ -33,7 +33,7 @@ public class Gateway implements net.NetConstants{
             outputToServer = new PrintWriter(socket.getOutputStream());
 
             inputFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
+            inObjFromServer = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
             
         }
@@ -41,14 +41,16 @@ public class Gateway implements net.NetConstants{
     public List<Shape> getShapes(){
         outputToServer.println(GET_SHAPES);
         outputToServer.flush();
+        
         List<Shape> shapes = new ArrayList<Shape>();
         try{
-            int n = Integer.parseInt(inputFromServer.readLine());
-            for(int i=0;i<n;i++){
-                String json = inputFromServer.readLine();
-                shapes.add(gson.fromJson(json, Shape.class));
-
-            }
+            shapes = (List<Shape>) inObjFromServer.readObject();
+//            int n = Integer.parseInt(inputFromServer.readLine());
+//            for(int i=0;i<n;i++){
+//                String json = inputFromServer.readLine();
+//                shapes.add(gson.fromJson(json, Shape.class));
+//
+//            }
             System.out.println(shapes);
             
         }catch(Exception ex){
