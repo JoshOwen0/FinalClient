@@ -10,7 +10,7 @@ package net;
  * @author Owen
  */
 public interface NetConstants {
-    public static int SEND_MOVES = 1;
-    public static int GET_SHAPES = 2;
+    public static int GET_SHAPES = 1;
+    public static int SEND_MOVES = 2;
     public static int SEND_READY = 3;
 }

@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.shape.Shape;
-
+import com.google.gson.Gson;
+import java.util.List;
+import javafx.scene.shape.Shape;
 /**
  *
  * @author Owen
@@ -21,7 +24,7 @@ public class Gateway implements net.NetConstants{
     private PrintWriter outputToServer;
     private BufferedReader inputFromServer;
     private GamePane gamePane;
-    
+    private Gson gson;
     public Gateway(GamePane gp) {
         this.gamePane = gp;
         try {
@@ -35,9 +38,24 @@ public class Gateway implements net.NetConstants{
             
         }
     }
-//    public List<Shape> getShapes(){
-//        return 
-//    }
+    public List<Shape> getShapes(){
+        outputToServer.println(GET_SHAPES);
+        outputToServer.flush();
+        List<Shape> shapes = new ArrayList<Shape>();
+        try{
+            int n = Integer.parseInt(inputFromServer.readLine());
+            for(int i=0;i<n;i++){
+                String json = inputFromServer.readLine();
+                shapes.add(gson.fromJson(json, Shape.class));
+
+            }
+            System.out.println(shapes);
+            
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return shapes;
+    }
     public void sendMoves(int x, int y){
         outputToServer.println(SEND_MOVES);
         outputToServer.println(String.valueOf(x) + " " + String.valueOf(y));

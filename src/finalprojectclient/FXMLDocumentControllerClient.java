@@ -62,7 +62,7 @@ public class FXMLDocumentControllerClient implements Initializable {
         Triangle t = new Triangle(100,100, 60,40,true);
 
         list.add(t.getShape());
-        gamePane.setShapes(list);
+        gamePane.setShapes(gateWay.getShapes());
     }
     
     @Override
