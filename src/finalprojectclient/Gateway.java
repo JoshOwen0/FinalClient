@@ -39,19 +39,23 @@ public class Gateway implements net.NetConstants{
         outputToServer.println(START_SIM);
         outputToServer.flush();
     }
-    public synchronized Point getPaddles(){
+    public synchronized Point[] getPaddles(){
         outputToServer.println(GET_PADDLES);
         outputToServer.flush();
-        Point pt=null;
+        Point p1=null;
+        Point p2=null;
         try{
-        pt =(Point) ObjInput.readObject();
+        p1 =(Point) ObjInput.readObject();
+        p2 =(Point) ObjInput.readObject();
         }catch(Exception ex){
             ex.printStackTrace();
         }
         //Triangle tr = new Triangle((int) pt.x,(int) pt.y,60,40,true);
         //Shape paddle = pt.getShape();
-        
-        return pt;
+        Point[] points = new Point[2];
+        points[0] = p1;
+        points[1] = p2;
+        return points;
     }
     public synchronized Point getBalls(){
         outputToServer.println(GET_BALLS);

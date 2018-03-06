@@ -33,6 +33,7 @@ import simulation.Triangle;
 public class FXMLDocumentControllerClient implements Initializable {
     
     private Triangle paddle;
+    private Triangle paddle2;
     private Gateway gateWay;
     private GamePane gamePane;
     private Rectangle outer;
@@ -67,11 +68,12 @@ public class FXMLDocumentControllerClient implements Initializable {
         
         gateWay.startSim();
         new Thread( () -> {while(true){
-            physics.Point pt = gateWay.getPaddles();
-            paddle = new Triangle((int) pt.x,(int) pt.y,60,40,true);
+            physics.Point[] pt = gateWay.getPaddles();
             
-            double px = pt.x + paddle.width/2;
-            double py = pt.y;
+            paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
+            paddle2 = new Triangle((int) pt[0].x,(int) pt[0].y,60,-40,true);
+            double px = pt[0].x + paddle.width/2;
+            double py = pt[0].y;
             java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
                     
             
@@ -114,8 +116,12 @@ public class FXMLDocumentControllerClient implements Initializable {
         Point pb;
         Circle c;
         Polygon p = (Polygon) paddle.getShape();
+        Polygon p2 = (Polygon) paddle2.getShape();
+        
         p.setStroke(Color.BLACK);
         p.setFill(Color.WHITE);
+        p2.setStroke(Color.BLACK);
+        p2.setFill(Color.WHITE);
         
         pb = gateWay.getBalls();
         c = new Circle(pb.x,pb.y,4);
@@ -123,6 +129,7 @@ public class FXMLDocumentControllerClient implements Initializable {
         c.setStroke(Color.BLACK);
         
         shapes.add(p);
+        shapes.add(p2);
         shapes.add(c);
         gamePane.setShapes(shapes);
     }
