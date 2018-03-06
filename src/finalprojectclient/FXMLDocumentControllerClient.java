@@ -5,10 +5,12 @@
  */
 package finalprojectclient;
 
+import java.awt.MouseInfo;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -16,12 +18,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
+import javafx.scene.shape.Polygon;
+import physics.Point;
 import simulation.Triangle;
-import javafx.geometry.Rectangle2D;
-import javafx.stage.Screen;
 
 /**
  *
@@ -29,54 +32,105 @@ import javafx.stage.Screen;
  */
 public class FXMLDocumentControllerClient implements Initializable {
     
+    private Triangle paddle;
     private Gateway gateWay;
     private GamePane gamePane;
+    private Rectangle outer;
+    
+    
     @FXML
     private Button button;
     @FXML
     private CheckBox readyCheck;
     @FXML
     private ListView playerList;
-    
+    private int tick;
     @FXML
     private void startGame(){
-        
+        Stage stage = (Stage) readyCheck.getScene().getWindow();
+        stage.close();
         Stage primaryStage = new Stage();
-        Scene scene = new Scene(gamePane, 600, 500);
+        Scene scene = new Scene(gamePane, 1920, 1017);
         
+        primaryStage.setMaximized(true);
         
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getVisualBounds();
-
-        primaryStage.setX(bounds.getMinX());
-        primaryStage.setY(bounds.getMinY());
-        primaryStage.setWidth(bounds.getWidth());
-        primaryStage.setHeight(bounds.getHeight());
         primaryStage.setTitle("Final Game");
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest((event)->System.exit(0));
         primaryStage.show();
-        List<Shape> list = new ArrayList<Shape>();
+        List<Shape> shapes = new ArrayList<Shape>();
+        outer = new Rectangle(0,0,scene.getWidth(),scene.getHeight());
+        outer.setStroke(Color.BLACK);
+        outer.setFill(Color.WHITE);
+        shapes.add(outer);
+        gamePane.setShapes(shapes);
         
+        gateWay.startSim();
+        new Thread( () -> {while(true){
+            physics.Point pt = gateWay.getPaddles();
+            paddle = new Triangle((int) pt.x,(int) pt.y,60,40,true);
+            
+            double px = pt.x + paddle.width/2;
+            double py = pt.y;
+            java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
+                    
+            
+            double x = p.x;
+            double y = p.y;
+            int dx=0;
+            int dy=0;
+            //sim.moveInner((int)x - pos.x, (int)y - pos.y);
+            if(x<px && Math.abs(x- px) >2)
+                //sim.moveInner(-3, 0);
+                dx=-2;
+            if(x>px && Math.abs(x-px) >2)
+                //sim.moveInner(3, 0);
+                dx=2;
+            if(y>py && Math.abs(y- py) >2)
+                //sim.moveInner(0, 3);
+                dy=2;
+            if(y<py && Math.abs(y- py) >2)
+                //sim.moveInner(0, -3);
+                dy=-2;
+            gateWay.sendMoves(dx, dy);
+            Platform.runLater(()->updateShapes());
+            try{
+                Thread.sleep(10);
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            
+        }}).start();
+    }
+    
+    @FXML
+    private void ready(){
+            gateWay.sendReady(readyCheck.isSelected());
+    }
+    private void updateShapes(){
+        List<Shape> shapes=new ArrayList<Shape>();
+        shapes.add(outer);
         
-        Triangle t = new Triangle(100,100, 60,40,true);
-
-        list.add(t.getShape());
-        gamePane.setShapes(gateWay.getShapes());
+        Point pb;
+        Circle c;
+        Polygon p = (Polygon) paddle.getShape();
+        p.setStroke(Color.BLACK);
+        p.setFill(Color.WHITE);
+        
+        pb = gateWay.getBalls();
+        c = new Circle(pb.x,pb.y,4);
+        c.setFill(Color.RED);
+        c.setStroke(Color.BLACK);
+        
+        shapes.add(p);
+        shapes.add(c);
+        gamePane.setShapes(shapes);
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         gamePane = new GamePane();
-        gateWay = new Gateway(this.gamePane);
-        List<Shape> list = new ArrayList<Shape>();
-        Rectangle r = new Rectangle(0,0,-1,1);
-        r.setFill(Color.BLACK);
-        Rectangle rd = new Rectangle(0,4,4,-1);
-        list.add(r);
-        list.add(rd);
-        
-        
+        gateWay = new Gateway(this.gamePane); 
     }    
     
 }

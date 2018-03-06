@@ -63,7 +63,6 @@ public class Simulation {
             // the ball, we nudge them apart until the box no longer
             // contains the ball.
             
-            inner.setColor(Color.CYAN);
             int bumpX = -1;
             if(dX < 0) bumpX = 1;
             int bumpY = -1;
@@ -88,7 +87,6 @@ public class Simulation {
     
     public void updateShapes()
     {
-        inner.setColor(Color.WHITE);
         inner.updateShape();
         ball.updateShape();
     }
