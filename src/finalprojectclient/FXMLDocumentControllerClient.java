@@ -71,7 +71,7 @@ public class FXMLDocumentControllerClient implements Initializable {
             physics.Point[] pt = gateWay.getPaddles();
             
             paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
-            paddle2 = new Triangle((int) pt[0].x,(int) pt[0].y,60,-40,true);
+            paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,-40,true);
             double px = pt[0].x + paddle.width/2;
             double py = pt[0].y;
             java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
