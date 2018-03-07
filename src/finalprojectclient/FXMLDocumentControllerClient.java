@@ -5,7 +5,6 @@
  */
 package finalprojectclient;
 
-import java.awt.MouseInfo;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +22,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import physics.Point;
 import simulation.Triangle;
@@ -43,6 +43,8 @@ public class FXMLDocumentControllerClient implements Initializable {
     private double mousey;
     private int player=-1;
     private Text scoreText;
+    private int score1,score2;
+    private boolean done;
     
     @FXML
     private Button button;
@@ -53,11 +55,13 @@ public class FXMLDocumentControllerClient implements Initializable {
     private int tick;
     @FXML
     private void startGame(){
+        done = false;
         Stage stage = (Stage) readyCheck.getScene().getWindow();
         stage.close();
         Stage primaryStage = new Stage();
         Scene scene = new Scene(gamePane, 1000, 800);
-        
+        score1=0;
+        score2=0;
         //primaryStage.setMaximized(true);
         
         primaryStage.setTitle("Final Game");
@@ -67,7 +71,7 @@ public class FXMLDocumentControllerClient implements Initializable {
         List<Shape> shapes = new ArrayList<Shape>();
         outer = new Rectangle(0,0,scene.getWidth(),scene.getHeight());
         outer.setStroke(Color.BLACK);
-        outer.setFill(Color.WHITE);
+        outer.setFill(Color.MISTYROSE);
         shapes.add(outer);
         gamePane.setShapes(shapes);
         
@@ -80,11 +84,11 @@ public class FXMLDocumentControllerClient implements Initializable {
             while(true){
                 int[] scores = gateWay.getScore();
                 Platform.runLater(() -> {
-                    scoreText.setText("Player 1: " + Integer.toString(scores[0]) + " Player 2: " + Integer.toString(scores[1]));
+                    score1=scores[1];
+                    score2=scores[0];
+                    scoreText.setText("Player 1: " + Integer.toString(scores[1]) + " \nPlayer 2: " + Integer.toString(scores[0]));
                     
-                        });
-                System.out.println(scores[0]+scores[1]);
-                
+                        });                
                 try{
                     Thread.sleep(500);
                 }catch(Exception ex){
@@ -104,9 +108,11 @@ public class FXMLDocumentControllerClient implements Initializable {
             if(player==0){
                 paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
                 paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,-40,true);
+                done=true;
             }else{
                 paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,-40,true);
                 paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,40,true);
+                done=true;
             }
             
             double px = pt[0].x + paddle.width/2;
@@ -143,36 +149,56 @@ public class FXMLDocumentControllerClient implements Initializable {
     @FXML
     private void ready(){
             player = gateWay.sendReady(readyCheck.isSelected());
-            System.out.println(player);
             
     }
     private void updateShapes(){
-        List<Shape> shapes=new ArrayList<Shape>();
-        shapes.add(outer);
         
-        Circle c;
-        Polygon p = (Polygon) paddle.getShape();
-        Polygon p2 = (Polygon) paddle2.getShape();
+        if(score1>4){
+            scoreText.setX(250);
+            scoreText.setY(400);
+            scoreText.setFont(Font.font("Broadway",70));
+            scoreText.setText("PLAYER 1 WINS");
+        }else{
+            if(score2>4){
+                scoreText.setX(250);
+                scoreText.setY(400);
+                scoreText.setFont(Font.font("Broadway",70));
+                scoreText.setText("PLAYER 2 WINS");
+                
+            }else{
+                List<Shape> shapes=new ArrayList<Shape>();
+            shapes.add(outer);
         
-        p.setStroke(Color.BLACK);
-        p.setFill(Color.WHITE);
-        p2.setStroke(Color.BLACK);
-        p2.setFill(Color.WHITE);
+            Circle c;
+            Polygon p = (Polygon) paddle.getShape();
+            Polygon p2 = (Polygon) paddle2.getShape();
+
+            p.setStroke(Color.BLACK);
+            p.setFill(Color.CYAN);
+            p2.setStroke(Color.BLACK);
+            p2.setFill(Color.CYAN);
+
+
+            c = new Circle(pb.x,pb.y,4);
+            c.setFill(Color.DARKGRAY);
+            c.setStroke(Color.BLACK);
+
+            shapes.add(p);
+            shapes.add(p2);
+            shapes.add(c);
+            gamePane.setShapes(shapes);
+            }
+        }
         
         
-        c = new Circle(pb.x,pb.y,4);
-        c.setFill(Color.RED);
-        c.setStroke(Color.BLACK);
         
-        shapes.add(p);
-        shapes.add(p2);
-        shapes.add(c);
-        gamePane.setShapes(shapes);
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         scoreText = new Text(20,20,"");
+        scoreText.setFont(Font.font ("Helvetica",15));
+        scoreText.setFill(Color.BLACK);
         gamePane = new GamePane(scoreText);
         gateWay = new Gateway(this.gamePane); 
     }    

@@ -15,7 +15,7 @@ public class GamePane extends Pane {
     
     public void setShapes(List<Shape> newShapes) {
         this.getChildren().clear();
-        this.getChildren().add(this.scoreText);
         this.getChildren().addAll(newShapes);
+        this.getChildren().add(this.scoreText);
     }
 }
