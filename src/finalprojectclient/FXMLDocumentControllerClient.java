@@ -32,12 +32,14 @@ import simulation.Triangle;
  */
 public class FXMLDocumentControllerClient implements Initializable {
     
+    private Point pb=null;
     private Triangle paddle;
     private Triangle paddle2;
     private Gateway gateWay;
     private GamePane gamePane;
     private Rectangle outer;
-    
+    private double mousex;
+    private double mousey;
     
     @FXML
     private Button button;
@@ -51,9 +53,9 @@ public class FXMLDocumentControllerClient implements Initializable {
         Stage stage = (Stage) readyCheck.getScene().getWindow();
         stage.close();
         Stage primaryStage = new Stage();
-        Scene scene = new Scene(gamePane, 1920, 1017);
+        Scene scene = new Scene(gamePane, 1000, 800);
         
-        primaryStage.setMaximized(true);
+        //primaryStage.setMaximized(true);
         
         primaryStage.setTitle("Final Game");
         primaryStage.setScene(scene);
@@ -69,16 +71,18 @@ public class FXMLDocumentControllerClient implements Initializable {
         gateWay.startSim();
         new Thread( () -> {while(true){
             physics.Point[] pt = gateWay.getPaddles();
-            
+            pb = gateWay.getBalls();
+            scene.setOnMouseMoved((e)->{
+                mousex = e.getSceneX();
+                mousey = e.getSceneY();
+            });
             paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
             paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,-40,true);
             double px = pt[0].x + paddle.width/2;
             double py = pt[0].y;
-            java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
-                    
-            
-            double x = p.x;
-            double y = p.y;
+            //java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
+            double x = mousex;
+            double y = mousey + paddle.height/2;
             int dx=0;
             int dy=0;
             //sim.moveInner((int)x - pos.x, (int)y - pos.y);
@@ -113,7 +117,6 @@ public class FXMLDocumentControllerClient implements Initializable {
         List<Shape> shapes=new ArrayList<Shape>();
         shapes.add(outer);
         
-        Point pb;
         Circle c;
         Polygon p = (Polygon) paddle.getShape();
         Polygon p2 = (Polygon) paddle2.getShape();
@@ -123,7 +126,7 @@ public class FXMLDocumentControllerClient implements Initializable {
         p2.setStroke(Color.BLACK);
         p2.setFill(Color.WHITE);
         
-        pb = gateWay.getBalls();
+        
         c = new Circle(pb.x,pb.y,4);
         c.setFill(Color.RED);
         c.setStroke(Color.BLACK);
