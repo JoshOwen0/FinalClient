@@ -92,13 +92,14 @@ public class Gateway implements net.NetConstants{
         }
         return i;
     }
-    public int[] getScore(){
+    public synchronized int[] getScore(){
         outputToServer.println(GET_SCORE);
         outputToServer.flush();
-        int[] scores=null;
+        int[] scores=new int[2];
         try{
             scores[0] = Integer.parseInt(inputFromServer.readLine());
             scores[1] = Integer.parseInt(inputFromServer.readLine());
+            
         }catch(Exception ex){
             ex.printStackTrace();
         }

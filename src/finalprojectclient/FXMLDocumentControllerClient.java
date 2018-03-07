@@ -76,18 +76,22 @@ public class FXMLDocumentControllerClient implements Initializable {
         
         
         new Thread( () -> {
-            
-            int[] scores = gateWay.getScore();
-            scoreText.setText("Player 1: " + Integer.toString(scores[0]) + " Player 2: " + Integer.toString(scores[1]));
-            
-            try{
-                Thread.sleep(500);
-            }catch(Exception ex){
-                ex.printStackTrace();
+            while(true){
+                int[] scores = gateWay.getScore();
+                Platform.runLater(() -> {
+                    scoreText.setText("Player 1: " + Integer.toString(scores[0]) + " Player 2: " + Integer.toString(scores[1]));
+                    
+                        });
+                System.out.println(scores[0]+scores[1]);
+                
+                try{
+                    Thread.sleep(500);
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+                
             }
-            
-            
-        });
+        }).start();
         
         new Thread( () -> {while(true){
             physics.Point[] pt = gateWay.getPaddles();
