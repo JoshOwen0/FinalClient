@@ -40,6 +40,7 @@ public class FXMLDocumentControllerClient implements Initializable {
     private Rectangle outer;
     private double mousex;
     private double mousey;
+    private int player=-1;
     
     @FXML
     private Button button;
@@ -76,8 +77,14 @@ public class FXMLDocumentControllerClient implements Initializable {
                 mousex = e.getSceneX();
                 mousey = e.getSceneY();
             });
-            paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
-            paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,-40,true);
+            if(player==0){
+                paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,40,true);
+                paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,-40,true);
+            }else{
+                paddle = new Triangle((int) pt[0].x,(int) pt[0].y,60,-40,true);
+                paddle2 = new Triangle((int) pt[1].x,(int) pt[1].y,60,40,true);
+            }
+            
             double px = pt[0].x + paddle.width/2;
             double py = pt[0].y;
             //java.awt.Point p = MouseInfo.getPointerInfo().getLocation();
@@ -111,7 +118,9 @@ public class FXMLDocumentControllerClient implements Initializable {
     
     @FXML
     private void ready(){
-            gateWay.sendReady(readyCheck.isSelected());
+            player = gateWay.sendReady(readyCheck.isSelected());
+            System.out.println(player);
+            
     }
     private void updateShapes(){
         List<Shape> shapes=new ArrayList<Shape>();

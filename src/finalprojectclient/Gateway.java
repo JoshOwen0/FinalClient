@@ -32,7 +32,7 @@ public class Gateway implements net.NetConstants{
             inputFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             ObjInput = new ObjectInputStream(socket.getInputStream());
         } catch (IOException ex) {
-            
+            ex.printStackTrace();
         }
     }
     public void startSim(){
@@ -76,13 +76,20 @@ public class Gateway implements net.NetConstants{
         outputToServer.flush();
         
     }
-    public void sendReady(boolean ready){
+    public int sendReady(boolean ready){
         outputToServer.println(SEND_READY);
         if(ready){
             outputToServer.println("ready");
         }else{
             outputToServer.println("unready");
         }
+        int i=-1;
         outputToServer.flush();
+        try{
+             i = Integer.valueOf(inputFromServer.readLine());
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return i;
     }
 }
