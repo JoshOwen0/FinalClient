@@ -42,6 +42,7 @@ public class FXMLDocumentControllerClient implements Initializable {
     private double mousex;
     private double mousey;
     private int player=-1;
+    private Text scoreText;
     
     @FXML
     private Button button;
@@ -70,8 +71,8 @@ public class FXMLDocumentControllerClient implements Initializable {
         shapes.add(outer);
         gamePane.setShapes(shapes);
         
-        Text scoreText = new Text(20,20,"");
-        gamePane.getChildren().add(scoreText);
+        
+        
         gateWay.startSim();
         
         
@@ -171,7 +172,8 @@ public class FXMLDocumentControllerClient implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        gamePane = new GamePane();
+        scoreText = new Text(20,20,"");
+        gamePane = new GamePane(scoreText);
         gateWay = new Gateway(this.gamePane); 
     }    
     
