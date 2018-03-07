@@ -15,4 +15,5 @@ public interface NetConstants {
     public static int SEND_READY = 3;
     public static int START_SIM = 4;
     public static int GET_BALLS = 5;
+    public static int GET_SCORE = 6;
 }

@@ -23,6 +23,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
 import physics.Point;
 import simulation.Triangle;
 
@@ -69,7 +70,25 @@ public class FXMLDocumentControllerClient implements Initializable {
         shapes.add(outer);
         gamePane.setShapes(shapes);
         
+        Text scoreText = new Text(20,20,"");
+        gamePane.getChildren().add(scoreText);
         gateWay.startSim();
+        
+        
+        new Thread( () -> {
+            
+            int[] scores = gateWay.getScore();
+            scoreText.setText("Player 1: " + Integer.toString(scores[0]) + " Player 2: " + Integer.toString(scores[1]));
+            
+            try{
+                Thread.sleep(500);
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+            
+            
+        });
+        
         new Thread( () -> {while(true){
             physics.Point[] pt = gateWay.getPaddles();
             pb = gateWay.getBalls();

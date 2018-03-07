@@ -26,7 +26,7 @@ public class Gateway implements net.NetConstants{
     public Gateway(GamePane gp) {
         this.gamePane = gp;
         try {
-            Socket socket = new Socket("localhost", 8000);
+            Socket socket = new Socket("143.44.68.64", 8000);
 
             outputToServer = new PrintWriter(socket.getOutputStream());
             inputFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -91,5 +91,17 @@ public class Gateway implements net.NetConstants{
             ex.printStackTrace();
         }
         return i;
+    }
+    public int[] getScore(){
+        outputToServer.println(GET_SCORE);
+        outputToServer.flush();
+        int[] scores=null;
+        try{
+            scores[0] = Integer.parseInt(inputFromServer.readLine());
+            scores[1] = Integer.parseInt(inputFromServer.readLine());
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return scores;
     }
 }
