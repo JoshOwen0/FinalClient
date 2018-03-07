@@ -69,7 +69,7 @@ public class Gateway implements net.NetConstants{
         
         return pb;
     }
-    public void sendMoves(int x, int y){
+    public synchronized void sendMoves(int x, int y){
         outputToServer.println(SEND_MOVES);
         outputToServer.println(String.valueOf(x));
         outputToServer.println(String.valueOf(y));
